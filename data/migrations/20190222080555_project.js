@@ -4,13 +4,13 @@ exports.up = function(knex, Promise) {
     tbl.string("name");
     tbl.string("description");
     tbl.timestamps(true, true);
-    tbl.boolean("completed").notNullable();
+    tbl.boolean("completed").defaultTo(false);
   });
-  // A project can contain multiple actions and has:
-  //x a unique Id.
-  //x a name.
-  //x a description.
-  //x a flag that indicates if the project is complete or not.
+  // - [ x] An `action` belongs to only one project. An action has:
+  // - [ x] a unique id.
+  // - [x ] a description of what needs to be done.
+  // - [x ] a notes column to add additional information.
+  // - [x ] a flag that indicates if the action has been completed.
 };
 
 exports.down = function(knex, Promise) {
