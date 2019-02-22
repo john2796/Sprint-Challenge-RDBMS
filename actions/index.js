@@ -7,7 +7,9 @@ const errHelper = (err, res) => {
   res.status(500).json({ message: `internal error server ${err}` });
 };
 
-//POST for adding actions.
+// @route    GET api/actions
+// @desc     add action
+// @Access   Public
 server.post("/:id", async (req, res) => {
   const { description, notes, completed = false } = req.body;
   const { id } = req.params;
@@ -31,7 +33,7 @@ server.post("/:id", async (req, res) => {
         .from("actions")
         .where({ id: newRecipe })
         .first();
-
+      posted.completed = posted.completed > 0 ? true : false;
       res.status(200).json(posted);
     } else {
       res.status(404).json({ message: "project with that id is not found" });

@@ -9,7 +9,6 @@ const errHelper = (err, res) => {
 
 const getAllProject = async (req, res) => {
   const { limit = 10, page = 1, name } = req.query;
-
   try {
     let projects;
     if (!name) {
@@ -35,10 +34,16 @@ const getAllProject = async (req, res) => {
 
     const results = projects.data.map(async project => {
       const actions = await db
-        .select()
-        .from("actions")
+        .select("a.id", "a.notes", "a.description", "a.completed")
+        .from("actions as a")
         .where({ action_id: project.id });
+
+      project.completed = project.completed > 0 ? true : false;
       project.actions = actions;
+      project.actions.map(action => {
+        action.completed = action.completed > 0 ? true : false;
+      });
+
       return project;
     });
 
@@ -76,7 +81,7 @@ server.get("/:id", async (req, res) => {
         .from("actions as a")
         .orderBy("id", "desc")
         .where({ action_id: project.id });
-
+      project.completed = project.completed > 0 ? true : false;
       project.actions = actions;
       return project;
     });
@@ -91,7 +96,7 @@ server.get("/:id", async (req, res) => {
   }
 });
 
-// @route    GET api/project
+// @route    POST api/project
 // @desc     POST for adding projects.
 // @Access   Public
 server.post("/", async (req, res) => {
@@ -111,7 +116,7 @@ server.post("/", async (req, res) => {
         .from("project")
         .where({ id: posted })
         .first();
-
+      newProject.completed = newProject.completed > 0 ? true : false;
       res.status(200).json(newProject);
     } else {
       res.status(404).json({ message: "dishes with that id is not found" });
@@ -121,7 +126,7 @@ server.post("/", async (req, res) => {
   }
 });
 
-// @route    GET api/project
+// @route    DELETE api/project
 // @desc     delete one project
 // @Access   Public
 server.delete("/:id", async (req, res) => {
@@ -142,6 +147,28 @@ server.delete("/:id", async (req, res) => {
   }
 });
 
+// @route    PUT api/project
+// @desc     Update
+// @Access   Public
+server.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, description, completed = false } = req.body;
+  if (!name || !description) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  try {
+    const updated = await db
+      .update({ name, description, completed })
+      .from("project")
+      .where({ id });
 
-
+    if (updated) {
+      getAllProject(req, res);
+    } else {
+      res.status(404).json({ message: "project not found" });
+    }
+  } catch (err) {
+    return errHelper(err, res);
+  }
+});
 module.exports = server;
