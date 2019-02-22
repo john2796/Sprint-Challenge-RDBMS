@@ -7,9 +7,7 @@ const errHelper = (err, res) => {
   res.status(500).json({ message: `internal error server ${err}` });
 };
 
-//  [GET] all projects with all actions and paginations
-//  [QUERY] by name
-server.get("/", async (req, res) => {
+const getAllProject = async (req, res) => {
   const { limit = 10, page = 1, name } = req.query;
 
   try {
@@ -51,9 +49,18 @@ server.get("/", async (req, res) => {
   } catch (err) {
     return errHelper(err, res);
   }
+};
+
+// @route    GET api/project
+// @desc      [GET] all projects with all actions and paginations  [QUERY] by name
+// @Access   Public
+server.get("/", async (req, res) => {
+  getAllProject(req, res);
 });
 
-//  GET for retrieving a project by its id that returns an object with the following structure:
+// @route    GET api/project/:id
+// @desc     for retrieving a project by its id that returns an object with the following structure:
+// @Access   Public
 server.get("/:id", async (req, res) => {
   // const { limit = 10, page = 1, name } = req.query;
   const { id } = req.params;
@@ -84,7 +91,9 @@ server.get("/:id", async (req, res) => {
   }
 });
 
-//POST for adding projects.
+// @route    GET api/project
+// @desc     POST for adding projects.
+// @Access   Public
 server.post("/", async (req, res) => {
   const { name, description, completed = false } = req.body;
 
@@ -111,5 +120,28 @@ server.post("/", async (req, res) => {
     return errHelper(err, res);
   }
 });
+
+// @route    GET api/project
+// @desc     delete one project
+// @Access   Public
+server.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await db
+      .delete()
+      .from("project")
+      .where({ id });
+
+    if (deleted) {
+      getAllProject(req, res);
+    } else {
+      res.status(404).json({ message: "project not found" });
+    }
+  } catch (err) {
+    return errHelper(err, res);
+  }
+});
+
+
 
 module.exports = server;
