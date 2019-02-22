@@ -33,7 +33,7 @@ server.post("/:id", async (req, res) => {
         .from("actions")
         .where({ id: newRecipe })
         .first();
-      posted.completed = posted.completed > 0 ? true : false;
+      // posted.completed = posted.completed > 0 ? true : false;
       res.status(200).json(posted);
     } else {
       res.status(404).json({ message: "project with that id is not found" });

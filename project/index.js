@@ -38,11 +38,11 @@ const getAllProject = async (req, res) => {
         .from("actions as a")
         .where({ action_id: project.id });
 
-      project.completed = project.completed > 0 ? true : false;
       project.actions = actions;
-      project.actions.map(action => {
-        action.completed = action.completed > 0 ? true : false;
-      });
+      // project.completed = project.completed > 0 ? true : false;
+      // project.actions.map(action => {
+      //   action.completed = action.completed > 0 ? true : false;
+      // });
 
       return project;
     });
@@ -81,7 +81,7 @@ server.get("/:id", async (req, res) => {
         .from("actions as a")
         .orderBy("id", "desc")
         .where({ action_id: project.id });
-      project.completed = project.completed > 0 ? true : false;
+      // project.completed = project.completed > 0 ? true : false;
       project.actions = actions;
       return project;
     });
@@ -116,7 +116,7 @@ server.post("/", async (req, res) => {
         .from("project")
         .where({ id: posted })
         .first();
-      newProject.completed = newProject.completed > 0 ? true : false;
+      // newProject.completed = newProject.completed > 0 ? true : false;
       res.status(200).json(newProject);
     } else {
       res.status(404).json({ message: "dishes with that id is not found" });
