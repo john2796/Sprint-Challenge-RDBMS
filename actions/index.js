@@ -17,22 +17,24 @@ server.post("/:id", async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
   try {
+    // get the project first
     const project = await db
       .select()
       .from("project")
       .where({ id })
       .first();
-
+    // check if project exists
     if (project) {
-      const [newRecipe] = await db
+      //insert to recipe with the same id as project speciy at `action_id: id`
+      const [newAction] = await db
         .insert({ description, notes, action_id: id })
         .into("actions")
         .returning("id");
-
+      //display new action
       const post = await db
         .select()
         .from("actions")
-        .where({ id: newRecipe });
+        .where({ id: newAction });
 
       res.status(200).json(post);
     } else {
