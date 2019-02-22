@@ -36,13 +36,10 @@ const getAllProject = async (req, res) => {
       const actions = await db
         .select("a.id", "a.notes", "a.description", "a.completed")
         .from("actions as a")
+        .orderBy("id", "desc")
         .where({ action_id: project.id });
 
       project.actions = actions;
-      // project.completed = project.completed > 0 ? true : false;
-      // project.actions.map(action => {
-      //   action.completed = action.completed > 0 ? true : false;
-      // });
 
       return project;
     });
@@ -100,26 +97,18 @@ server.get("/:id", async (req, res) => {
 // @desc     POST for adding projects.
 // @Access   Public
 server.post("/", async (req, res) => {
-  const { name, description, completed = false } = req.body;
-
+  const { name, description } = req.body;
   if (!name || !description) {
     return res.status(400).json({ message: "all fields are required" });
   }
-  try {
-    const [posted] = await db
-      .insert({ name, description, completed })
-      .into("project");
 
-    if (posted) {
-      const newProject = await db
-        .select()
-        .from("project")
-        .where({ id: posted })
-        .first();
-      // newProject.completed = newProject.completed > 0 ? true : false;
-      res.status(200).json(newProject);
+  try {
+    const project = await db.insert({ name, description }).into("project");
+
+    if (project.rowCount) {
+      getAllProject(req, res);
     } else {
-      res.status(404).json({ message: "dishes with that id is not found" });
+      res.status(404).json({ message: "failed to add project" });
     }
   } catch (err) {
     return errHelper(err, res);

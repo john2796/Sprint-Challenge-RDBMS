@@ -11,7 +11,7 @@ const errHelper = (err, res) => {
 // @desc     add action
 // @Access   Public
 server.post("/:id", async (req, res) => {
-  const { description, notes, completed = false } = req.body;
+  const { description, notes } = req.body;
   const { id } = req.params;
   if (!notes || !description) {
     return res.status(400).json({ message: "All fields are required" });
@@ -25,16 +25,16 @@ server.post("/:id", async (req, res) => {
 
     if (project) {
       const [newRecipe] = await db
-        .insert({ description, notes, action_id: id, completed })
-        .into("actions");
+        .insert({ description, notes, action_id: id })
+        .into("actions")
+        .returning("id");
 
-      const posted = await db
+      const post = await db
         .select()
         .from("actions")
-        .where({ id: newRecipe })
-        .first();
-      // posted.completed = posted.completed > 0 ? true : false;
-      res.status(200).json(posted);
+        .where({ id: newRecipe });
+
+      res.status(200).json(post);
     } else {
       res.status(404).json({ message: "project with that id is not found" });
     }
