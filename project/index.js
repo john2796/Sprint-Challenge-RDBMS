@@ -7,6 +7,52 @@ const errHelper = (err, res) => {
   res.status(500).json({ message: `internal error server ${err}` });
 };
 
+//  [GET] all projects with all actions and paginations
+//  [QUERY] by name
+server.get("/", async (req, res) => {
+  const { limit = 10, page = 1, name } = req.query;
+
+  try {
+    let projects;
+    if (!name) {
+      projects = await db
+        .select(
+          "p.id",
+          "p.name",
+          "p.description",
+          "p.created_at",
+          "p.completed"
+        )
+        .from("project as p")
+        .orderBy("id", "desc")
+        .paginate(limit, page, true);
+    } else {
+      projects = await db
+        .select()
+        .from("project")
+        .orderBy("id", "desc")
+        .where("name", "like"`%${name}%`)
+        .paginate(limit, page, true);
+    }
+
+    const results = projects.data.map(async project => {
+      const actions = await db
+        .select()
+        .from("actions")
+        .where({ action_id: project.id });
+      project.actions = actions;
+      return project;
+    });
+
+    Promise.all(results).then(completed => {
+      projects.data = completed;
+      res.status(200).json(projects);
+    });
+  } catch (err) {
+    return errHelper(err, res);
+  }
+});
+
 //  GET for retrieving a project by its id that returns an object with the following structure:
 server.get("/:id", async (req, res) => {
   // const { limit = 10, page = 1, name } = req.query;
