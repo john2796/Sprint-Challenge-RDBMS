@@ -1,8 +1,8 @@
-# Sprint Challenge: RDBMS and SQL - Projects & Actions
+# xSprint Challenge: RDBMS and SQL - Projects & Actions
 
 This challenge allows you to practice the concepts and techniques learned over the past Sprint and apply them in a concrete project. This Sprint explored Adding Data Persistence to Web API's and you were taught the following modules: Introduction to Relational Databases and SQL, Inserting and Modifying Data, Querying Data; Migrations and Seeds and Introduction to Data Modeling. In your challenge for this Sprint, you will demonstrate proficiency by creating an API that pesist data to SQLite3.
 
-## Instructions
+## x Instructions
 
 **Read these instructions carefully. Understand exactly what is expected _before_ starting this Sprint Challenge.**
 
@@ -12,11 +12,11 @@ You are not allowed to collaborate during the Sprint Challenge. However, you are
 
 You have three hours to complete this challenge. Plan your time accordingly.
 
-## Commits
+## xCommits
 
 Commit your code regularly and meaningfully. This helps both you (in case you ever need to return to old code for any number of reasons and your project manager.
 
-## Description
+##x Description
 
 In this challenge, you build an application that lets users track `Projects` and `Actions` in the spirit of David Allen's _Getting Things Done (GTD)_ methodology.
 
@@ -24,7 +24,7 @@ Use _Node.js_, _Express.js_ and _Knex_ to build a RESTful API for a `Project Tra
 
 This will be akin to the Web API that you built in the last sprint, only this time, you'll be writing the persistence layer.
 
-## Self-Study/Essay Questions
+## x Self-Study/Essay Questions
 
 Demonstrate your understanding of this week's concepts by answering the following free-form questions. Edit this document to include your answers after each question. Make sure to leave a blank line above and below your answer so it is clear and easy to read by your project manager.
 
