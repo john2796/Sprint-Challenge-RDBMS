@@ -19,8 +19,8 @@ server.get("/:id", async (req, res) => {
 
     const results = projects.map(async project => {
       const actions = await db
-        .select()
-        .from("actions")
+        .select("a.id", "a.description", "a.notes", "a.completed")
+        .from("actions as a")
         .orderBy("id", "desc")
         .where({ action_id: project.id });
 
@@ -30,6 +30,7 @@ server.get("/:id", async (req, res) => {
 
     Promise.all(results).then(completed => {
       projects = completed;
+
       res.status(200).json(projects);
     });
   } catch (err) {
@@ -49,14 +50,13 @@ server.post("/", async (req, res) => {
       .insert({ name, description, completed })
       .into("project");
 
-    console.log(posted);
-
     if (posted) {
       const newProject = await db
         .select()
         .from("project")
         .where({ id: posted })
         .first();
+
       res.status(200).json(newProject);
     } else {
       res.status(404).json({ message: "dishes with that id is not found" });
